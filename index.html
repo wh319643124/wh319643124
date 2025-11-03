@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ 给我家宝贝的道歉小惊喜 ❤️</title>
+    <style>
+        /* 弹窗缩小：从280x160→220x120，更小巧 */
+        .popup {
+            position: fixed;
+            width: 220px; 
+            height: 120px;
+            background-color: #fff0f5; 
+            border: 2px solid #ff69b4; 
+            border-radius: 12px; 
+            box-shadow: 0 3px 12px rgba(255,105,180,0.2); 
+            padding: 15px;
+            z-index: 1000; 
+            transition: all 0.4s ease; 
+            opacity: 0; 
+            transform: scale(0.8); 
+        }
+        .popup.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* 文字大小调整：从16px→13px，适配小窗口 */
+        .popup-text {
+            font-family: "微软雅黑", Arial, sans-serif;
+            color: #e63946; 
+            font-size: 15px; 
+            text-align: center;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+        body {
+            background-color: #fef9f8;
+            margin: 0;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 🌟 哄女朋友原谅的专属文字库（混合道歉+撒娇+承诺+回忆）🌟
+        const loveTexts = [
+            // 道歉认错
+            "宝贝别生气啦，我真的错了🥺",
+            "原谅我这次好不好？下次再也不敢了",
+            "都是我的错，你打我骂我都行，别不理我",
+            "我知道错了，你就原谅你的小笨蛋吧～",
+            "对不起对不起对不起，重要的话说三遍！",
+            "我错了，以后都听你的，绝对不顶嘴",
+            "宝贝，我错了，别再皱眉头啦",
+            
+            // 撒娇求原谅
+            "你生气的样子都可爱，但我还是想让你笑呀",
+            "抱抱我家宝贝，别生气了好不好？",
+            "你不理我的时候，我心里空空的😔",
+            "给你买最爱的奶茶/蛋糕，原谅我嘛～",
+            "下次见面给你带礼物，求原谅！",
+            "我的小祖宗，别生气了，我给你捶背",
+            
+            // 表达在乎
+            "没有你的消息，我一整天都没精神",
+            "你是我最在乎的人，别让我担心呀",
+            "我不能没有你，别生气了好不好？",
+            "你生气，我比你更难受",
+            "即使你生气，我也还是最爱你",
+            
+            // 温暖回忆+承诺
+            "记得上次你笑的时候，我心都化了，别生气了",
+            "以后我会更耐心听你说话，再也不敷衍",
+            "我们还要一起去看海呢，别生气了",
+            "下次再也不会让你等我那么久了",
+            "我会改掉坏毛病，做你的贴心小棉袄",
+            
+            // 软磨硬泡
+            "原谅我吧，不然我要哭了😭",
+            "你就当我是个小孩子，原谅我这一次",
+            "我保证，这是最后一次惹你生气",
+            "宝贝，我错了，你看我多真诚～",
+            "再生气下去，我要变成望妻石了",
+            
+            // 浪漫兜底
+            "余生还长，我想和你好好走下去",
+            "你是我的唯一，别生气了",
+            "我的女孩，原谅我，好吗？"
+        ];
+
+        function createLovePopup() {
+            const popup = document.createElement('div');
+            popup.classList.add('popup');
+            const randomText = loveTexts[Math.floor(Math.random() * loveTexts.length)];
+            popup.innerHTML = `<div class="popup-text">${randomText}</div>`;
+            
+            // 适配缩小后的弹窗尺寸（220x120）
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const popupWidth = 220; 
+            const popupHeight = 100;
+            const randomLeft = Math.floor(Math.random() * (viewportWidth - popupWidth));
+            const randomTop = Math.floor(Math.random() * (viewportHeight - popupHeight));
+            popup.style.left = `${randomLeft}px`;
+            popup.style.top = `${randomTop}px`;
+            
+            // 点击关闭
+            popup.addEventListener('click', () => {
+                popup.style.opacity = 0;
+                popup.style.transform = 'scale(0.8)';
+                setTimeout(() => popup.remove(), 400);
+            });
+            
+            document.body.appendChild(popup);
+            setTimeout(() => popup.classList.add('show'), 10);
+        }
+
+        function showMultiplePopups() {
+            const popupCount = 100; // 弹窗数量增加到20个，更有诚意
+            const intervalMs = 250; // 间隔缩短，营造密集的温暖感
+            for (let i = 0; i < popupCount; i++) {
+                setTimeout(createLovePopup, i * intervalMs);
+            }
+        }
+
+        window.addEventListener('load', showMultiplePopups);
+    </script>
+</body>
+</html>
