@@ -3,108 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>❤️ 致小小罗 ❤️</title>
+    <title>✨ 给好朋友的幸福包裹 ✨</title>
     <style>
-        /* 弹窗缩小：从280x160→220x120，更小巧 */
+        /* 全局样式 */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+            font-family: "微软雅黑", Arial, sans-serif;
+        }
+
+        /* 前置确认模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* 最顶层 */
+        }
+        .modal-content {
+            width: 320px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .modal-title {
+            font-size: 20px;
+            color: #ff6b81;
+            margin-bottom: 25px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-confirm {
+            background-color: #ffe0e6; /* 浅粉 */
+            color: #ff6b81;
+        }
+        .btn-confirm:hover {
+            background-color: #ffccd5;
+        }
+        .btn-sure {
+            background-color: #e6e6fa; /* 浅紫 */
+            color: #9370db;
+        }
+        .btn-sure:hover {
+            background-color: #d8bfd8;
+        }
+
+        /* 随机温柔颜色弹窗 */
         .popup {
             position: fixed;
-            width: 220px; 
-            height: 120px;
-            background-color: #fff0f5; 
-            border: 2px solid #ff69b4; 
-            border-radius: 12px; 
-            box-shadow: 0 3px 12px rgba(255,105,180,0.2); 
+            width: 220px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
             padding: 15px;
-            z-index: 1000; 
-            transition: all 0.4s ease; 
-            opacity: 0; 
-            transform: scale(0.8); 
+            z-index: 1000;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: scale(0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .popup.show {
             opacity: 1;
             transform: scale(1);
         }
-        /* 文字大小调整：从16px→13px，适配小窗口 */
         .popup-text {
-            font-family: "微软雅黑", Arial, sans-serif;
-            color: #e63946; 
-            font-size: 15px; 
+            font-size: 13px;
             text-align: center;
             line-height: 1.6;
-            margin-top: 15px;
+            padding: 5px;
         }
-        body {
-            background-color: #fef9f8;
-            margin: 0;
-            min-height: 100vh;
+
+        /* 隐藏元素 */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+    <!-- 前置确认窗口 -->
+    <div class="modal-overlay" id="welcomeModal">
+        <div class="modal-content">
+            <div class="modal-title">✨ 请接收幸福包裹 ✨</div>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-confirm" onclick="startBlessing()">确定</button>
+                <button class="modal-btn btn-sure" onclick="startBlessing()">非常确定</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 🌟 哄女朋友原谅的专属文字库（混合道歉+撒娇+承诺+回忆）🌟
-        const loveTexts = [
-            // 道歉认错
-            "宝贝别生气啦，我真的错了🥺",
-            "原谅我这次好不好？下次再也不敢了",
-            "都是我的错，你打我骂我都行，别不理我",
-            "我知道错了，你就原谅你的小笨蛋吧～",
-            "对不起对不起对不起，重要的话说三遍！",
-            "我错了，以后都听你的，绝对不顶嘴",
-            "宝贝，我错了，别再皱眉头啦",
-            
-            // 撒娇求原谅
-            "你生气的样子都可爱，但我还是想让你笑呀",
-            "抱抱我家宝贝，别生气了好不好？",
-            "你不理我的时候，我心里空空的😔",
-            "给你买最爱的奶茶/蛋糕，原谅我嘛～",
-            "下次见面给你带礼物，求原谅！",
-            "我的小祖宗，别生气了，我给你捶背",
-            
-            // 表达在乎
-            "没有你的消息，我一整天都没精神",
-            "你是我最在乎的人，别让我担心呀",
-            "我不能没有你，别生气了好不好？",
-            "你生气，我比你更难受",
-            "即使你生气，我也还是最爱你",
-            
-            // 温暖回忆+承诺
-            "记得上次你笑的时候，我心都化了，别生气了",
-            "以后我会更耐心听你说话，再也不敷衍",
-            "我们还要一起去看海呢，别生气了",
-            "下次再也不会让你等我那么久了",
-            "我会改掉坏毛病，做你的贴心小棉袄",
-            
-            // 软磨硬泡
-            "原谅我吧，不然我要哭了😭",
-            "你就当我是个小孩子，原谅我这一次",
-            "我保证，这是最后一次惹你生气",
-            "宝贝，我错了，你看我多真诚～",
-            "再生气下去，我要变成望妻石了",
-            
-            // 浪漫兜底
-            "余生还长，我想和你好好走下去",
-            "你是我的唯一，别生气了",
-            "我的女孩，原谅我，好吗？"
+        // 1. 温柔鲜艳的颜色库（背景+文字配色，确保对比度）
+        const gentleColors = [
+            { bg: '#ffe0e6', text: '#ff6b81' }, // 浅粉
+            { bg: '#e6f7ff', text: '#1890ff' }, // 浅蓝
+            { bg: '#f0fff4', text: '#52c41a' }, // 浅绿
+            { bg: '#fffbe6', text: '#faad14' }, // 鹅黄
+            { bg: '#f9f0ff', text: '#722ed1' }, // 浅紫
+            { bg: '#fff2e8', text: '#fa8c16' }, // 浅橙
+            { bg: '#e6ffee', text: '#36cbcb' }, // 薄荷绿
+            { bg: '#fff0f5', text: '#e63946' }, // 柔粉
         ];
 
-        function createLovePopup() {
+        // 2. 给好朋友的关心祝福词库
+        const friendBlessings = [
+            "最近别太累啦，记得多休息～",
+            "天天开心是最重要的！✨",
+            "有空一起去喝奶茶呀～",
+            "要按时吃饭，别饿着自己！",
+            "不管遇到什么，我都在你身边～",
+            "今天也要元气满满哦！",
+            "累了就停下来歇一歇，我陪你～",
+            "希望你每天都有甜甜的心情～",
+            "记得多喝水，照顾好自己！",
+            "我们的友谊要一直一直哦～",
+            "别熬夜啦，早点睡美容觉！",
+            "遇到不开心的事，随时找我吐槽～",
+            "你笑起来的时候超好看！",
+            "新的一天也要闪闪发光呀～",
+            "工作再忙也要记得放松～",
+            "下次见面给你带小礼物！",
+            "你是我最好的朋友,bro～",
+            "别太较真，开心最重要啦～",
+            "天气变凉了，记得加衣服！",
+            "希望你每天都被快乐包围～",
+            "要对自己好一点哦！",
+            "我们要一起慢慢变老呀～",
+            "不管多久没见，感情都不会变～",
+            "今天的你也超棒的！",
+            "想你啦，有空约个饭吧～"
+        ];
+
+        // 3. 创建单个祝福弹窗
+        function createBlessingPopup() {
             const popup = document.createElement('div');
             popup.classList.add('popup');
-            const randomText = loveTexts[Math.floor(Math.random() * loveTexts.length)];
-            popup.innerHTML = `<div class="popup-text">${randomText}</div>`;
             
-            // 适配缩小后的弹窗尺寸（220x120）
+            // 随机选择温柔颜色
+            const randomColor = gentleColors[Math.floor(Math.random() * gentleColors.length)];
+            popup.style.backgroundColor = randomColor.bg;
+            popup.style.color = randomColor.text;
+            
+            // 随机选择祝福词
+            const randomBlessing = friendBlessings[Math.floor(Math.random() * friendBlessings.length)];
+            popup.innerHTML = `<div class="popup-text">${randomBlessing}</div>`;
+            
+            // 随机位置（避免超出屏幕）
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
-            const popupWidth = 220; 
-            const popupHeight = 100;
+            const popupWidth = 220;
+            const popupHeight = 120;
             const randomLeft = Math.floor(Math.random() * (viewportWidth - popupWidth));
             const randomTop = Math.floor(Math.random() * (viewportHeight - popupHeight));
             popup.style.left = `${randomLeft}px`;
             popup.style.top = `${randomTop}px`;
             
-            // 点击关闭
+            // 点击关闭弹窗
             popup.addEventListener('click', () => {
                 popup.style.opacity = 0;
                 popup.style.transform = 'scale(0.8)';
@@ -115,16 +189,22 @@
             setTimeout(() => popup.classList.add('show'), 10);
         }
 
+        // 4. 批量显示弹窗
         function showMultiplePopups() {
-            const popupCount = 100; // 弹窗数量增加到20个，更有诚意
-            const intervalMs = 250; // 间隔缩短，营造密集的温暖感
+            const popupCount = 50; // 弹窗数量
+            const intervalMs = 250; // 弹窗间隔
             for (let i = 0; i < popupCount; i++) {
-                setTimeout(createLovePopup, i * intervalMs);
+                setTimeout(createBlessingPopup, i * intervalMs);
             }
         }
 
-        window.addEventListener('load', showMultiplePopups);
+        // 5. 前置窗口触发逻辑
+        function startBlessing() {
+            // 隐藏前置窗口
+            document.getElementById('welcomeModal').classList.add('hidden');
+            // 显示祝福弹窗
+            showMultiplePopups();
+        }
     </script>
 </body>
-
 </html>
