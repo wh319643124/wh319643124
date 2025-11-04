@@ -67,7 +67,19 @@
             background-color: #d8bfd8;
         }
 
-        /* 随机温柔颜色弹窗 */
+        /* 回弹动画定义 */
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            60% { transform: scale(1.2); } /* 回弹点：稍微放大 */
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes bounceOut {
+            0% { opacity: 1; transform: scale(1); }
+            40% { transform: scale(1.2); } /* 关闭时先弹一下 */
+            100% { opacity: 0; transform: scale(0.8); }
+        }
+
+        /* 随机温柔颜色弹窗（带回弹动画） */
         .popup {
             position: fixed;
             width: 220px;
@@ -76,17 +88,19 @@
             box-shadow: 0 3px 12px rgba(0,0,0,0.05);
             padding: 15px;
             z-index: 1000;
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: scale(0.8);
             display: flex;
             align-items: center;
             justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
         }
         .popup.show {
-            opacity: 1;
-            transform: scale(1);
+            animation: bounceIn 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
         }
+        .popup.hide {
+            animation: bounceOut 0.3s forwards;
+        }
+
         .popup-text {
             font-size: 13px;
             text-align: center;
@@ -113,7 +127,7 @@
     </div>
 
     <script>
-        // 1. 温柔鲜艳的颜色库（背景+文字配色，确保对比度）
+        // 1. 温柔鲜艳的颜色库（背景+文字配色）
         const gentleColors = [
             { bg: '#ffe0e6', text: '#ff6b81' }, // 浅粉
             { bg: '#e6f7ff', text: '#1890ff' }, // 浅蓝
@@ -125,8 +139,9 @@
             { bg: '#fff0f5', text: '#e63946' }, // 柔粉
         ];
 
-        // 2. 给好朋友的关心祝福词库
+        // 2. 给好朋友的关心祝福词库（已扩充）
         const friendBlessings = [
+            // 日常关心类
             "最近别太累啦，记得多休息～",
             "天天开心是最重要的！✨",
             "有空一起去喝奶茶呀～",
@@ -160,6 +175,7 @@
             "累了就躺平一会儿，世界不会塌的～",
             "要不要我给你点杯热奶茶暖暖手？",
             "今天的风有点大，别被吹跑啦～",
+            "记得涂护手霜，手手要嫩嫩的～",
             "周末要不要一起去公园散步？",
             "别太节省，喜欢的东西偶尔奖励自己～",
             "最近有没有看什么好看的剧？推荐给我呀～",
@@ -190,21 +206,20 @@
             popup.style.left = `${randomLeft}px`;
             popup.style.top = `${randomTop}px`;
             
-            // 点击关闭弹窗
+            // 点击关闭弹窗（带回弹动画）
             popup.addEventListener('click', () => {
-                popup.style.opacity = 0;
-                popup.style.transform = 'scale(0.8)';
-                setTimeout(() => popup.remove(), 400);
+                popup.classList.add('hide');
+                setTimeout(() => popup.remove(), 300); // 等待关闭动画结束
             });
             
             document.body.appendChild(popup);
-            setTimeout(() => popup.classList.add('show'), 10);
+            setTimeout(() => popup.classList.add('show'), 10); // 延迟触发弹出动画
         }
 
         // 4. 批量显示弹窗
         function showMultiplePopups() {
             const popupCount = 100; // 弹窗数量
-            const intervalMs = 250; // 弹窗间隔
+            const intervalMs = 200; // 弹窗间隔
             for (let i = 0; i < popupCount; i++) {
                 setTimeout(createBlessingPopup, i * intervalMs);
             }
