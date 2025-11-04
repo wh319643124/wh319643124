@@ -24,7 +24,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999; /* 最顶层 */
+            z-index: 9999;
         }
         .modal-content {
             width: 320px;
@@ -53,14 +53,14 @@
             transition: all 0.3s ease;
         }
         .btn-confirm {
-            background-color: #ffe0e6; /* 浅粉 */
+            background-color: #ffe0e6;
             color: #ff6b81;
         }
         .btn-confirm:hover {
             background-color: #ffccd5;
         }
         .btn-sure {
-            background-color: #e6e6fa; /* 浅紫 */
+            background-color: #e6e6fa;
             color: #9370db;
         }
         .btn-sure:hover {
@@ -70,25 +70,26 @@
         /* 回弹动画定义 */
         @keyframes bounceIn {
             0% { opacity: 0; transform: scale(0.8); }
-            60% { transform: scale(1.2); } /* 回弹点：稍微放大 */
+            60% { transform: scale(1.25); }
             100% { opacity: 1; transform: scale(1); }
         }
         @keyframes bounceOut {
             0% { opacity: 1; transform: scale(1); }
-            40% { transform: scale(1.2); } /* 关闭时先弹一下 */
+            40% { transform: scale(1.25); }
             100% { opacity: 0; transform: scale(0.8); }
         }
 
-        /* 随机温柔颜色弹窗（带回弹动画） */
+        /* 弹窗样式（带标题） */
         .popup {
             position: fixed;
             width: 220px;
-            height: 60px;
+            height: 70px; /* 增加高度容纳标题 */
             border-radius: 12px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.05);
             padding: 15px;
             z-index: 1000;
             display: flex;
+            flex-direction: column; /* 垂直排列标题和内容 */
             align-items: center;
             justify-content: center;
             opacity: 0;
@@ -101,11 +102,21 @@
             animation: bounceOut 0.3s forwards;
         }
 
+        /* 弹窗标题样式 */
+        .popup-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 5px; /* 和内容保持间距 */
+            color: inherit; /* 继承弹窗文字颜色 */
+        }
+
+        /* 弹窗内容样式 */
         .popup-text {
             font-size: 13px;
             text-align: center;
             line-height: 1.6;
             padding: 5px;
+            color: inherit;
         }
 
         /* 隐藏元素 */
@@ -118,30 +129,29 @@
     <!-- 前置确认窗口 -->
     <div class="modal-overlay" id="welcomeModal">
         <div class="modal-content">
-            <div class="modal-title">✨ 请接收幸福包裹 ✨</div>
+            <div class="modal-title">✨ pdd帮忙砍一刀 ✨</div>
             <div class="modal-buttons">
-                <button class="modal-btn btn-confirm" onclick="startBlessing()">确定</button>
-                <button class="modal-btn btn-sure" onclick="startBlessing()">非常确定</button>
+                <button class="modal-btn btn-confirm" onclick="startBlessing()">砍一刀</button>
+                <button class="modal-btn btn-sure" onclick="startBlessing()">砍999刀</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. 温柔鲜艳的颜色库（背景+文字配色）
+        // 1. 温柔鲜艳的颜色库
         const gentleColors = [
-            { bg: '#ffe0e6', text: '#ff6b81' }, // 浅粉
-            { bg: '#e6f7ff', text: '#1890ff' }, // 浅蓝
-            { bg: '#f0fff4', text: '#52c41a' }, // 浅绿
-            { bg: '#fffbe6', text: '#faad14' }, // 鹅黄
-            { bg: '#f9f0ff', text: '#722ed1' }, // 浅紫
-            { bg: '#fff2e8', text: '#fa8c16' }, // 浅橙
-            { bg: '#e6ffee', text: '#36cbcb' }, // 薄荷绿
-            { bg: '#fff0f5', text: '#e63946' }, // 柔粉
+            { bg: '#ffe0e6', text: '#ff6b81' },
+            { bg: '#e6f7ff', text: '#1890ff' },
+            { bg: '#f0fff4', text: '#52c41a' },
+            { bg: '#fffbe6', text: '#faad14' },
+            { bg: '#f9f0ff', text: '#722ed1' },
+            { bg: '#fff2e8', text: '#fa8c16' },
+            { bg: '#e6ffee', text: '#36cbcb' },
+            { bg: '#fff0f5', text: '#e63946' },
         ];
 
         // 2. 给好朋友的关心祝福词库（已扩充）
         const friendBlessings = [
-            // 日常关心类
             "最近别太累啦，记得多休息～",
             "天天开心是最重要的！✨",
             "有空一起去喝奶茶呀～",
@@ -182,7 +192,7 @@
             "晚上早点睡，梦里什么都有",
         ];
 
-        // 3. 创建单个祝福弹窗
+        // 3. 创建单个祝福弹窗（带标题）
         function createBlessingPopup() {
             const popup = document.createElement('div');
             popup.classList.add('popup');
@@ -192,34 +202,37 @@
             popup.style.backgroundColor = randomColor.bg;
             popup.style.color = randomColor.text;
             
-            // 随机选择祝福词
+            // 随机选择祝福词 + 添加标题
             const randomBlessing = friendBlessings[Math.floor(Math.random() * friendBlessings.length)];
-            popup.innerHTML = `<div class="popup-text">${randomBlessing}</div>`;
+            popup.innerHTML = `
+                <div class="popup-title">温馨提示❤️</div>
+                <div class="popup-text">${randomBlessing}</div>
+            `;
             
-            // 随机位置（避免超出屏幕）
+            // 随机位置（调整高度适配新弹窗）
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             const popupWidth = 220;
-            const popupHeight = 120;
+            const popupHeight = 140; // 和弹窗高度一致
             const randomLeft = Math.floor(Math.random() * (viewportWidth - popupWidth));
             const randomTop = Math.floor(Math.random() * (viewportHeight - popupHeight));
             popup.style.left = `${randomLeft}px`;
             popup.style.top = `${randomTop}px`;
             
-            // 点击关闭弹窗（带回弹动画）
+            // 点击关闭弹窗
             popup.addEventListener('click', () => {
                 popup.classList.add('hide');
-                setTimeout(() => popup.remove(), 300); // 等待关闭动画结束
+                setTimeout(() => popup.remove(), 300);
             });
             
             document.body.appendChild(popup);
-            setTimeout(() => popup.classList.add('show'), 10); // 延迟触发弹出动画
+            setTimeout(() => popup.classList.add('show'), 10);
         }
 
         // 4. 批量显示弹窗
         function showMultiplePopups() {
-            const popupCount = 100; // 弹窗数量
-            const intervalMs = 200; // 弹窗间隔
+            const popupCount = 100;
+            const intervalMs = 200;
             for (let i = 0; i < popupCount; i++) {
                 setTimeout(createBlessingPopup, i * intervalMs);
             }
@@ -227,9 +240,7 @@
 
         // 5. 前置窗口触发逻辑
         function startBlessing() {
-            // 隐藏前置窗口
             document.getElementById('welcomeModal').classList.add('hidden');
-            // 显示祝福弹窗
             showMultiplePopups();
         }
     </script>
